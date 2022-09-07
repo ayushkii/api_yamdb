@@ -1,13 +1,21 @@
-from rest_framework import viewsets, mixins, filters
-from rest_framework.pagination import LimitOffsetPagination
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, viewsets
+from rest_framework.pagination import LimitOffsetPagination
 
-from reviews.models import Genre, Category, Title
-from .serializers import GenreSerializer, CategorySerializer, TitleWriteSerializer, TitleReadSerializer
+from reviews.models import Category, Genre, Title
 
-class ListRetrieveCreateDestroyViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mixins.CreateModelMixin, 
-mixins.DestroyModelMixin, viewsets.GenericViewSet):
+from .serializers import (CategorySerializer, GenreSerializer,
+                          TitleReadSerializer, TitleWriteSerializer)
+
+
+class ListRetrieveCreateDestroyViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin, mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+
     """Кастомный вьюсет для модели Genre и Category"""
+
 
 class GenreViewSet(ListRetrieveCreateDestroyViewSet):
     queryset = Genre.objects.all()
@@ -25,6 +33,7 @@ class CategoryViewSet(ListRetrieveCreateDestroyViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name')
     pagination_class = LimitOffsetPagination
+
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
