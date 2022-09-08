@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
@@ -7,6 +8,61 @@ from rest_framework import mixins
 from .serializers import CommentSerializer, ReviewsSerializer
 from reviews.models import Reviews, Title
 from .permissions import IsOwnerOrReadOnly
+=======
+
+from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, viewsets
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny
+
+from reviews.models import Category, Genre, Reviews, Title
+
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewsSerializer,
+                          TitleReadSerializer, TitleWriteSerializer)
+
+
+class ListRetrieveCreateDestroyViewSet(
+    mixins.ListModelMixin, mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin, mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+
+    """Кастомный вьюсет для модели Genre и Category"""
+
+
+class GenreViewSet(ListRetrieveCreateDestroyViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name')
+    pagination_class = LimitOffsetPagination
+
+
+class CategoryViewSet(ListRetrieveCreateDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name')
+    pagination_class = LimitOffsetPagination
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_fields = ('category', 'genre', 'name', 'year')
+    search_fields = ('name')
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            return TitleReadSerializer
+        return TitleWriteSerializer
+
+
+>>>>>>> test
 
 
 class ReviewsViewSet(viewsets.ModelViewSet):
@@ -31,7 +87,11 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Класс Коментарии для обработки комментариев"""
     serializer_class = CommentSerializer
+<<<<<<< HEAD
     permission_classes = (IsOwnerOrReadOnly,)
+=======
+    permission_classes = (AllowAny,)
+>>>>>>> test
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -44,3 +104,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         review = get_object_or_404(Reviews, id=review_id)
 
         return review.comments.all()
+<<<<<<< HEAD
+=======
+
+>>>>>>> test

@@ -12,3 +12,9 @@ class User(AbstractUser):
         'Роль',
         default='user',
     )
+
+# class PreUser(models.Model):
+#     email = models.EmailField(max_length=254)
+#     username = models.CharField(max_length=150)
+#     code = models.CharField(max_length=150)
+
