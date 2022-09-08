@@ -1,9 +1,21 @@
+
 import datetime as dt
 
 from django.db.models import Avg
 from rest_framework import serializers
 
 from reviews.models import Category, Genre, Title
+
+from rest_framework import serializers
+from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
+
+from reviews.models import Comment, Reviews
+from rest_framework import serializers
+from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
+
+from reviews.models import Comment, Reviews
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -36,7 +48,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
         read_only_fields = ('rating',)
 
     def get_rating(self, obj):
-        return Review.objects.filter(title=obj).aggregate(Avg('rating'))
+        return Reviews.objects.filter(title=obj).aggregate(Avg('rating'))
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
@@ -61,3 +73,33 @@ class TitleWriteSerializer(serializers.ModelSerializer):
                 'введенного года!'
             )
         return value
+
+
+
+class ReviewsSerializer(serializers.ModelSerializer):
+    author = SlugRelatedField(slug_field='username', read_only=True)
+
+    class Meta:
+        fields = '__all__'
+        model = Reviews
+        validators = (
+            UniqueTogetherValidator(
+                queryset=Reviews.objects.all(),
+                fields=('title', 'author'),
+                message='Невозможно сделать два отзыва к оджному произведнию'
+            ),
+        )
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username'
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Comment
+        read_only_fields = ('author', 'post', 'id')
+
+    
