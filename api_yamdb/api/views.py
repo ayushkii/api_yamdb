@@ -1,20 +1,16 @@
 
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import LimitOffsetPagination
-
-from reviews.models import Category, Genre, Title
-
-from .serializers import (CategorySerializer, GenreSerializer,
-                          TitleReadSerializer, TitleWriteSerializer)
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import mixins
 
-from .serializers import CommentSerializer, ReviewsSerializer
-from reviews.models import Reviews, Title
+from reviews.models import Category, Genre, Reviews, Title
+
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewsSerializer,
+                          TitleReadSerializer, TitleWriteSerializer)
+
 
 class ListRetrieveCreateDestroyViewSet(
     mixins.ListModelMixin, mixins.RetrieveModelMixin,

@@ -1,14 +1,17 @@
 from collections import UserString
+from secrets import token_hex
 from urllib import request
+
+from django.core.mail import send_mail
 from django.shortcuts import render
-from rest_framework import views, status, viewsets, mixins
+from rest_framework import mixins, status, views, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .models import User
 from .serializers import SignUpSerializer, TokenSerializer, code_dict
-from django.core.mail import send_mail
-from rest_framework.response import Response
-from secrets import token_hex
-from rest_framework.decorators import action
-from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class PostOnlyViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     pass

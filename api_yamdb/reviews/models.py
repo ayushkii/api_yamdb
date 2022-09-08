@@ -1,9 +1,9 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
 
-RATE_SOCRES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+RATE_SOCRES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10))
 
 class Genre(models.Model):
     name = models.CharField(
@@ -101,7 +101,7 @@ class Reviews(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews'
     )
-    score = models.IntegerField(choices=RATE_SOCRES)
+    score = models.IntegerField(choices=RATE_SOCRES, unique=True)
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
     )

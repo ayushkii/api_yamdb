@@ -3,19 +3,10 @@ import datetime as dt
 
 from django.db.models import Avg
 from rest_framework import serializers
-
-from reviews.models import Category, Genre, Title
-
-from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
 
-from reviews.models import Comment, Reviews
-from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
-from rest_framework.validators import UniqueTogetherValidator
-
-from reviews.models import Comment, Reviews
+from reviews.models import Category, Comment, Genre, Reviews, Title
 
 
 class GenreSerializer(serializers.ModelSerializer):
