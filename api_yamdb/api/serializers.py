@@ -75,7 +75,6 @@ class TitleWriteSerializer(serializers.ModelSerializer):
         return value
 
 
-
 class ReviewsSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
 

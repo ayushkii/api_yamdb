@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-RATE_SOCRES = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+RATE_SOCRES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 class Genre(models.Model):
     name = models.CharField(
@@ -91,8 +91,6 @@ class TitleGenre(models.Model):
 
     def __str__(self):
         return f'{self.title} {self.genre}'
-
-
 
 
 class Reviews(models.Model):
