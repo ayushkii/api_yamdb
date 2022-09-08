@@ -2,10 +2,9 @@ import datetime as dt
 
 from django.db.models import Avg
 from rest_framework import serializers
-
+from rest_framework.validators import UniqueValidator
 from reviews.models import Category, Genre, Title
 from users.models import User
-from rest_framework.validators import UniqueValidator
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -65,7 +64,7 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
-        max_length=254, 
+        max_length=254,
         validators=(UniqueValidator(
                     queryset=User.objects.all(),
                     message="Данный email уже существует"
@@ -86,5 +85,3 @@ class UserSerializer(serializers.ModelSerializer):
                 'Недопустимое имя пользовтеля!'
             )
         return value
-
-

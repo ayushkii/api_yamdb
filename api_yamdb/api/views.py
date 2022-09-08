@@ -1,18 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from requests import Response
 from rest_framework import filters, mixins, viewsets
+from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
-
 from reviews.models import Category, Genre, Title
 from users.models import User
-from requests import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
 
-from .serializers import (
-    CategorySerializer, GenreSerializer,
-    TitleReadSerializer, TitleWriteSerializer,
-    UserSerializer
-)
+from .serializers import (CategorySerializer, GenreSerializer,
+                          TitleReadSerializer, TitleWriteSerializer,
+                          UserSerializer)
 
 
 class ListRetrieveCreateDestroyViewSet(
@@ -53,6 +49,7 @@ class TitleViewSet(viewsets.ModelViewSet):
             return TitleReadSerializer
         return TitleWriteSerializer
 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -63,4 +60,4 @@ class UserViewSet(viewsets.ModelViewSet):
     def me(self, request):
         self_user = request.user
         serializer = self.get_serializer(self_user)
-        return Response(serializer.data) 
+        return Response(serializer.data)
