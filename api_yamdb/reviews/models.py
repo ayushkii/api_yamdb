@@ -27,7 +27,7 @@ class Category(models.Model):
     )
     slug = models.SlugField(
         max_length=50,
-        nique=True,
+        unique=True,
         verbose_name='имя в url'
     )
 

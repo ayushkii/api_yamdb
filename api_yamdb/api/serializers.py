@@ -4,6 +4,8 @@ from django.db.models import Avg
 from rest_framework import serializers
 
 from reviews.models import Category, Genre, Title
+from users.models import User
+from rest_framework.validators import UniqueValidator
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -11,7 +13,6 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Genre
-        lookup_field = 'slug'
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -19,7 +20,6 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Category
-        lookup_field = 'slug'
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -61,3 +61,30 @@ class TitleWriteSerializer(serializers.ModelSerializer):
                 'введенного года!'
             )
         return value
+
+
+class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        max_length=254, 
+        validators=(UniqueValidator(
+                    queryset=User.objects.all(),
+                    message="Данный email уже существует"
+                    ),)
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name',
+            'last_name', 'bio', 'role'
+        )
+        lookup_field = 'username'
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Недопустимое имя пользовтеля!'
+            )
+        return value
+
+
