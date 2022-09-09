@@ -1,26 +1,15 @@
-<<<<<<< HEAD
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import mixins
-
-from .serializers import CommentSerializer, ReviewsSerializer
-from reviews.models import Reviews, Title
-from .permissions import IsOwnerOrReadOnly
-=======
-
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from reviews.models import Category, Genre, Reviews, Title
 
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewsSerializer,
                           TitleReadSerializer, TitleWriteSerializer)
+from .permissions import IsOwnerOrReadOnly
 
 
 class ListRetrieveCreateDestroyViewSet(
@@ -55,6 +44,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('category', 'genre', 'name', 'year')
     search_fields = ('name')
+    permission_classes = (IsAuthenticated, )
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -62,15 +52,12 @@ class TitleViewSet(viewsets.ModelViewSet):
         return TitleWriteSerializer
 
 
->>>>>>> test
-
-
 class ReviewsViewSet(viewsets.ModelViewSet):
     """Класс Отзывы для обработки  запросов:
     GET,POST,DELETE,PATCH"""
     serializer_class = ReviewsSerializer
     queryset = Reviews.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -87,11 +74,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Класс Коментарии для обработки комментариев"""
     serializer_class = CommentSerializer
-<<<<<<< HEAD
-    permission_classes = (IsOwnerOrReadOnly,)
-=======
-    permission_classes = (AllowAny,)
->>>>>>> test
+    permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -104,7 +87,3 @@ class CommentViewSet(viewsets.ModelViewSet):
         review = get_object_or_404(Reviews, id=review_id)
 
         return review.comments.all()
-<<<<<<< HEAD
-=======
-
->>>>>>> test

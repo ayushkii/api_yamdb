@@ -1,16 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.contrib.auth import get_user_model
 
-<<<<<<< HEAD
-
-User = get_user_model()
-
-RATE_SOCRES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-=======
 User = get_user_model()
 
 RATE_SOCRES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10))
+
 
 class Genre(models.Model):
     name = models.CharField(
@@ -98,7 +92,6 @@ class TitleGenre(models.Model):
 
     def __str__(self):
         return f'{self.title} {self.genre}'
->>>>>>> test
 
 
 class Reviews(models.Model):
@@ -109,11 +102,7 @@ class Reviews(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews'
     )
-<<<<<<< HEAD
-    score = models.IntegerField(choices=RATE_SOCRES)
-=======
     score = models.IntegerField(choices=RATE_SOCRES, unique=True)
->>>>>>> test
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
     )
@@ -146,7 +135,3 @@ class Comment(models.Model):
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
-<<<<<<< HEAD
-=======
-
->>>>>>> test

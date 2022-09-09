@@ -1,17 +1,9 @@
-<<<<<<< HEAD
-=======
-
 import datetime as dt
 
 from django.db.models import Avg
->>>>>>> test
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 from rest_framework.validators import UniqueTogetherValidator
-
-<<<<<<< HEAD
-from reviews.models import Comment, Reviews
-=======
 from reviews.models import Category, Comment, Genre, Reviews, Title
 
 
@@ -70,7 +62,6 @@ class TitleWriteSerializer(serializers.ModelSerializer):
                 'введенного года!'
             )
         return value
->>>>>>> test
 
 
 class ReviewsSerializer(serializers.ModelSerializer):
@@ -98,9 +89,3 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         model = Comment
         read_only_fields = ('author', 'post', 'id')
-
-<<<<<<< HEAD
-    
-=======
-    
->>>>>>> test
