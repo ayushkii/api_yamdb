@@ -4,9 +4,9 @@ import datetime as dt
 from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-from rest_framework.validators import UniqueTogetherValidator
-
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from reviews.models import Category, Comment, Genre, Reviews, Title
+from users.models import User
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -14,7 +14,6 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Genre
-        lookup_field = 'slug'
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -22,7 +21,6 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('name', 'slug')
         model = Category
-        lookup_field = 'slug'
 
 
 class TitleReadSerializer(serializers.ModelSerializer):
@@ -93,3 +91,28 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ('author', 'post', 'id')
 
     
+
+class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        max_length=254,
+        validators=(UniqueValidator(
+                    queryset=User.objects.all(),
+                    message="Данный email уже существует"
+                    ),)
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name',
+            'last_name', 'bio', 'role'
+        )
+        lookup_field = 'username'
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Недопустимое имя пользовтеля!'
+            )
+        return value
+
