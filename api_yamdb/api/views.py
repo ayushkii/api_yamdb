@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from requests import Response
 from rest_framework import filters, mixins, viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 from reviews.models import Category, Genre, Reviews, Title
@@ -13,10 +13,12 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewsSerializer,
                           TitleReadSerializer, TitleWriteSerializer,
                           UserSerializer)
+from rest_framework import permissions
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsSelfUserOrReadOnly
 
 
-class ListRetrieveCreateDestroyViewSet(
-    mixins.ListModelMixin, mixins.RetrieveModelMixin,
+class ListCreateDestroyViewSet(
+    mixins.ListModelMixin,
     mixins.CreateModelMixin, mixins.DestroyModelMixin,
     viewsets.GenericViewSet
 ):
@@ -24,29 +26,48 @@ class ListRetrieveCreateDestroyViewSet(
     """Кастомный вьюсет для модели Genre и Category"""
 
 
-class GenreViewSet(ListRetrieveCreateDestroyViewSet):
+class GenreViewSet(ListCreateDestroyViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     lookup_field = 'slug'
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name')
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
+    search_fields = ('name',)
     pagination_class = LimitOffsetPagination
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_permissions(self):
+        if self.action in ('retrieve', 'list'):
+            return (AllowAny(),)
+        return super().get_permissions()
 
 
-class CategoryViewSet(ListRetrieveCreateDestroyViewSet):
+class CategoryViewSet(ListCreateDestroyViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('name')
+    search_fields = ('name',)
     pagination_class = LimitOffsetPagination
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_permissions(self):
+        if self.action in ('retrieve', 'list'):
+            return (AllowAny(),)
+        return super().get_permissions() 
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ('category', 'genre', 'name', 'year')
-    search_fields = ('name')
+    filterset_fields = ('genre', 'category', 'name', 'year')
+    search_fields = ('name',)
+    pagination_class = LimitOffsetPagination
+    permission_classes = (IsAdminOrReadOnly,)
+
+    def get_permissions(self):
+        if self.action in ('retrieve', 'list'):
+            return (AllowAny(),)
+        return super().get_permissions()
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -97,10 +118,17 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     lookup_field = 'username'
     pagination_class = LimitOffsetPagination
+    permission_classes = (IsAdmin, IsSelfUserOrReadOnly)
 
+    
     @action(methods=['get', 'patch'], detail=False)
     def me(self, request):
         self_user = request.user
         serializer = self.get_serializer(self_user)
         return Response(serializer.data)
+
+    # def get_permissions(self):
+    # if self.action == 'retrieve':
+    #     return (IsSelfUserOrReadOnly(),)
+    # return super().get_permissions() 
 

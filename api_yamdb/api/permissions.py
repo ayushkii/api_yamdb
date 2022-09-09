@@ -1,0 +1,40 @@
+from rest_framework import permissions
+
+
+class IsAdmin(permissions.BasePermission):
+    """Дает возможность админу создавать новых пользователей."""
+
+    message = 'Доступно только для администратора'
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return request.user.role == 'admin' or request.user.is_superuser == True
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS and request.user.is_authenticated:
+            return True
+        return request.user.role == 'admin' or request.user.is_superuser == True
+
+class IsAdminOrReadOnly(permissions.BasePermission):
+
+    message = 'Редактировать могут только администраторы'
+
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            if request.user.role == 'admin':
+                return True
+        return False
+    
+
+
+class IsSelfUserOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return True
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_authenticated:
+            return True
+        return False

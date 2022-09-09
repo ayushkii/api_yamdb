@@ -37,7 +37,7 @@ class TitleReadSerializer(serializers.ModelSerializer):
         read_only_fields = ('rating',)
 
     def get_rating(self, obj):
-        return Reviews.objects.filter(title=obj).aggregate(Avg('rating'))
+        return Reviews.objects.filter(title=obj).aggregate(Avg('score')).get('score_avg')
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
