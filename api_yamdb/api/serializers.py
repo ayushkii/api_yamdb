@@ -116,3 +116,10 @@ class UserSerializer(serializers.ModelSerializer):
             )
         return value
 
+    def validate_role(self, value):
+        if value not in ('admin', 'moderator', 'user'):
+            raise serializers.ValidationError(
+                'Недопустимая пользовательская роль!'
+            )
+        return value
+

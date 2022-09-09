@@ -15,6 +15,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           UserSerializer)
 from rest_framework import permissions
 from .permissions import IsAdmin, IsAdminOrReadOnly, IsSelfUserOrReadOnly
+from .filters import TitleFilter
 
 
 class ListCreateDestroyViewSet(
@@ -58,11 +59,10 @@ class CategoryViewSet(ListCreateDestroyViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
-    filterset_fields = ('genre', 'category', 'name', 'year')
-    search_fields = ('name',)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
     pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = TitleFilter
 
     def get_permissions(self):
         if self.action in ('retrieve', 'list'):
@@ -127,8 +127,4 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(self_user)
         return Response(serializer.data)
 
-    # def get_permissions(self):
-    # if self.action == 'retrieve':
-    #     return (IsSelfUserOrReadOnly(),)
-    # return super().get_permissions() 
 
