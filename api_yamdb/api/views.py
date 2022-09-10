@@ -5,6 +5,7 @@ from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import api_view
 
 from reviews.models import Category, Genre, Reviews, Title
 from users.models import User
@@ -120,8 +121,18 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     permission_classes = (IsAdmin,)
 
-    @action(methods=['get', 'patch'], detail=False, permission_classes=(IsSelfUserOrReadOnly,))
+
+    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(IsSelfUserOrReadOnly,))
     def me(self, request):
+        if request.method == 'PATCH':
+            user = request.user
+            serializer = UserSerializer(data=request.data)
+            if serializer.is_valid():
+                user.save()
+                return Response(user)
+            else:
+                return Response(serializer.errors)
+        
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 

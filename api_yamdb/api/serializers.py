@@ -97,7 +97,8 @@ class UserSerializer(serializers.ModelSerializer):
         validators=(UniqueValidator(
                     queryset=User.objects.all(),
                     message="Данный email уже существует"
-                    ),)
+                    ),
+                    )
     )
 
     class Meta:
@@ -115,10 +116,19 @@ class UserSerializer(serializers.ModelSerializer):
             )
         return value
 
+    # def validate(self, data):
+    #     if self.context['request'].user.role != 'admin':
+    #         if self.context['request'].user.role != data['role']:
+    #             raise serializers.ValidationError(
+    #                 'Невозможно подписаться изменить роль')
+    #     return data
+
     def validate_role(self, value):
         if value not in ('admin', 'moderator', 'user'):
             raise serializers.ValidationError(
                 'Недопустимая пользовательская роль!'
             )
         return value
+
+    
 
