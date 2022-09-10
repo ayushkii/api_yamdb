@@ -5,9 +5,10 @@ from .views import SignUpViewSet
 
 router = SimpleRouter()
 
+app_name = 'auth'
 
 router.register('', SignUpViewSet)
 
 urlpatterns = [
-    path('auth/', include(router.urls)),
+    path('', include(router.urls)),
 ]

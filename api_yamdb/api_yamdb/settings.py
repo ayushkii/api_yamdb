@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
     'rest_framework.authtoken',
+    'drf_yasg',
 
 ]
 

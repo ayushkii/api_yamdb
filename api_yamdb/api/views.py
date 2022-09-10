@@ -1,7 +1,7 @@
 
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from requests import Response
+from rest_framework.response import Response
 from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
@@ -86,7 +86,6 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-
         return title.reviews.all()
 
     def perform_create(self, serializer):
@@ -118,13 +117,11 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     lookup_field = 'username'
     pagination_class = LimitOffsetPagination
-    permission_classes = (IsAdmin, IsSelfUserOrReadOnly)
+    permission_classes = (IsAdmin,)
 
-    
-    @action(methods=['get', 'patch'], detail=False)
+    @action(methods=['get', 'patch'], detail=False, permission_classes=(IsSelfUserOrReadOnly,))
     def me(self, request):
-        self_user = request.user
-        serializer = self.get_serializer(self_user)
+        serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
 
