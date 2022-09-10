@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Category, Comment, Genre, TitleGenre, Reviews, Title, User
 
-admin.site.unregister(User)
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Title)
 admin.site.register(Genre)
