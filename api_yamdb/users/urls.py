@@ -11,4 +11,5 @@ router.register('', SignUpViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    
 ]

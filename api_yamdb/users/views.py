@@ -42,8 +42,8 @@ class SignUpViewSet(viewsets.ModelViewSet):
         }
         return Response(response_dict, status=status.HTTP_200_OK)
 
-# class TokenViewSet(PostOnlyViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = TokenSerializer
+class TokenViewSet(PostOnlyViewSet):
+    queryset = User.objects.all()
+    serializer_class = TokenSerializer
 
 
