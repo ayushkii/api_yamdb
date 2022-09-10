@@ -1,8 +1,9 @@
+from urllib import request
 from rest_framework import serializers
-
+from django.shortcuts import get_object_or_404
 from .models import User
 
-code_dict = {}
+CODE_DICT = {}
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -17,7 +18,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         email = data['email']
         username = data['username']
         if username != 'me':
-            if User.objects.filter(username=username, email=email).exists():
+            if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
                 raise serializers.ValidationError(
                     'Пользователь с таким именем или email уже существует')
             return data
@@ -25,9 +26,9 @@ class SignUpSerializer(serializers.ModelSerializer):
             'Недопустимое имя пользователя')
 
 
-class TokenSerializer(serializers.ModelSerializer):
+class TokenSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField(max_length=32)
-
+    username = serializers.CharField(max_length=256)
     class Meta:
         model = User
         fields = ('username', 'confirmation_code')
@@ -35,8 +36,7 @@ class TokenSerializer(serializers.ModelSerializer):
     def validate(self, data):
         username = data['username']
         confirmation_code = data['confirmation_code']
-        if User.objects.filter(username=data['username']).exists():
-            if code_dict[f'{username}'] == f'{confirmation_code}':
-                return data
-            raise serializers.ValidationError('Неверный код подтверждения')
-        raise serializers.ValidationError('Неверное имя пользователя')
+        get_object_or_404(User, username=username)
+        if CODE_DICT[f'{username}'] == f'{confirmation_code}':
+            return data
+        raise serializers.ValidationError('Неверный код подтверждения')
