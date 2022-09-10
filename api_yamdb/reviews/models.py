@@ -5,6 +5,7 @@ from users.models import User
 
 RATE_SOCRES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10))
 
+
 class Genre(models.Model):
     name = models.CharField(
         max_length=200,
@@ -135,4 +136,3 @@ class Comment(models.Model):
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
-
