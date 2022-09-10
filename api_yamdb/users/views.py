@@ -63,7 +63,8 @@ def signup(request):
 def token(request):
     serializer = TokenSerializer(data=request.data)
     if serializer.is_valid():
-        user = get_object_or_404(User, request.data['username'])
+        username = request.data['username']
+        user = get_object_or_404(User, username=username)
         refresh = RefreshToken.for_user(user)
         response_dict={
             'refresh': str(refresh),
