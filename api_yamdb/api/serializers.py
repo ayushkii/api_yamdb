@@ -1,4 +1,6 @@
 import datetime as dt
+from email.policy import default
+from turtle import title
 
 from django.db.models import Avg
 from rest_framework import serializers
@@ -64,20 +66,17 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
 
 class ReviewsSerializer(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
-    title = serializers.PrimaryKeyRelatedField(read_only=True)
-    class Meta:
-        fields = '__all__'
-        read_only_fields = ('title',)
-        model = Reviews
-        validators = (
-            UniqueTogetherValidator(
-                queryset=Reviews.objects.all(),
-                fields=('title', 'author'),
-                message='Невозможно сделать два отзыва к оджному произведнию'
-            ),
-        )
 
+    author = serializers.StringRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    class Meta:
+        model = Reviews
+        exclude = ('title',)
+        # validators = [UniqueTogetherValidator(
+        #         queryset=Reviews.objects.all(),
+        #         fields=['title_id', 'author'],
+        #         message='Невозможно сделать два отзыва к оджному произведнию')]
+
+        # def validate():
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(

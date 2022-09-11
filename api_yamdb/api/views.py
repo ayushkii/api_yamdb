@@ -1,4 +1,4 @@
-from functools import partial
+
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -6,7 +6,6 @@ from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import api_view
 
 from reviews.models import Category, Genre, Reviews, Title
 from users.models import User
@@ -63,7 +62,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
     pagination_class = LimitOffsetPagination
-    permission_classes = (IsAuthenticated,IsAdminOrReadOnly,)
+    permission_classes = (IsAuthenticated, IsAdminOrReadOnly,)
     filterset_class = TitleFilter
     filterset_fields = ('category', 'genre', 'name', 'year')
     search_fields = ('name')
@@ -83,7 +82,6 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     """Класс Отзывы для обработки  запросов:
     GET,POST,DELETE,PATCH"""
     serializer_class = ReviewsSerializer
-    queryset = Reviews.objects.all()
     permission_classes = (IsOwnerOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
@@ -92,8 +90,8 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         return title.reviews.all()
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        serializer.save(title=title, author=self.request.user)
+        id=self.kwargs.get('title_id')
+        serializer.save(title_id=id, author=self.request.user)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -122,7 +120,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdmin,)
 
 
-    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(permissions.IsAuthenticated,))
+    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(IsAuthenticated,))
     def me(self, request):
         if request.method == 'PATCH':
             user = request.user
