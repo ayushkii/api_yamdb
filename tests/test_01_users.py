@@ -557,6 +557,7 @@ class Test01UserAPI:
             'bio': 'new user bio',
         }
         response = user_client.patch('/api/v1/users/me/', data=data)
+        
         assert response.status_code == 200, (
             'Проверьте, что при PATCH запросе `/api/v1/users/me/`, '
             'пользователь с ролью user может изменить свои данные, и возвращается статус 200'
@@ -567,6 +568,7 @@ class Test01UserAPI:
         }
         response = user_client.patch('/api/v1/users/me/', data=data)
         response_json = response.json()
+        print(response.data)
         assert response_json.get('role') == 'user', (
             'Проверьте, что при PATCH запросе `/api/v1/users/me/`, '
             'пользователь с ролью user не может сменить себе роль'
