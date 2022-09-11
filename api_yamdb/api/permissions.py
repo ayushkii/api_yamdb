@@ -1,24 +1,6 @@
 from rest_framework import permissions
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    """Собственный класс разрешений"""
-    def has_permission(self, request, view):
-        return (
-            request.method in permissions.SAFE_METHODS
-            or request.user.is_authenticated
-        )
-
-    def has_object_permission(self, request, view, obj):
-        return (
-            request.method in permissions.SAFE_METHODS
-            or obj.author == request.user
-        )
-=======
-=======
->>>>>>> test
 class IsAdmin(permissions.BasePermission):
     """Дает возможность админу создавать новых пользователей."""
 
@@ -55,9 +37,7 @@ class IsSelfUserOrReadOnly(permissions.BasePermission):
         if request.user == obj:
             return True
         return False
-<<<<<<< HEAD
->>>>>>> test
-=======
+        
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """Собственный класс разрешений"""
@@ -72,4 +52,3 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             request.method in permissions.SAFE_METHODS
             or obj.author == request.user
         )
->>>>>>> test

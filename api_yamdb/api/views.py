@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import filters, mixins, viewsets
 from rest_framework.decorators import action, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
-
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view
 
@@ -13,7 +12,6 @@ from users.models import User
 
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewsSerializer,
-
                           TitleReadSerializer, TitleWriteSerializer,
                           UserSerializer)
 from rest_framework import permissions
@@ -73,6 +71,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.action in ('retrieve', 'list'):
             return (AllowAny(),)
         return super().get_permissions()
+
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return TitleReadSerializer
@@ -84,7 +83,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     GET,POST,DELETE,PATCH"""
     serializer_class = ReviewsSerializer
     queryset = Reviews.objects.all()
-    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
+    permission_classes = (IsOwnerOrReadOnly,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -100,7 +99,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Класс Коментарии для обработки комментариев"""
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
+    permission_classes = (IsOwnerOrReadOnly,)
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -136,4 +135,3 @@ class UserViewSet(viewsets.ModelViewSet):
         
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
-

@@ -89,7 +89,7 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         read_only_fields = ('author', 'post', 'id')
 
-
+    
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -129,3 +129,5 @@ class UserSerializer(serializers.ModelSerializer):
                 'Недопустимая пользовательская роль!'
             )
         return value
+
+    
