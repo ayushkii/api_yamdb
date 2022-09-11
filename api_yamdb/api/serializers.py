@@ -131,4 +131,8 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     
-
+class SelfSerializer(UserSerializer):
+    class Meta:
+        fields = '__all__'
+        read_only_fields = ('role',)
+        model = User

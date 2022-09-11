@@ -14,9 +14,9 @@ from users.models import User
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewsSerializer,
                           TitleReadSerializer, TitleWriteSerializer,
-                          UserSerializer)
+                          UserSerializer, SelfSerializer)
 from rest_framework import permissions
-from .permissions import IsAdmin, IsAdminOrReadOnly, IsSelfUserOrReadOnly, IsOwnerOrReadOnly
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsOwnerOrReadOnly
 from .filters import TitleFilter
 
 
@@ -123,17 +123,15 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdmin,)
 
 
-    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(IsSelfUserOrReadOnly, IsAuthenticated))
+    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(permissions.IsAuthenticated,))
     def me(self, request):
         if request.method == 'PATCH':
             user = request.user
-            print('Request data:', request.data),
-            serializer = UserSerializer(user, data=request.data, partial=True)
+            serializer = SelfSerializer(user, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
-            # if request.user.role == request.data.json()['role']:
             serializer.save()
             return Response(serializer.data,)
-        serializer = UserSerializer(request.user)
+        serializer = SelfSerializer(request.user)
         return Response(serializer.data)
 
 
