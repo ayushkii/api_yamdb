@@ -64,10 +64,11 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
 
 class ReviewsSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
-
+    author = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         fields = '__all__'
+        read_only_fields = ('title',)
         model = Reviews
         validators = (
             UniqueTogetherValidator(
