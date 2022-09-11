@@ -1,9 +1,9 @@
-
 from django.db import models
 
 from users.models import User
 
-RATE_SOCRES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10))
+RATE_SOCRES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
+               (6, 6), (7, 7), (8, 8), (9, 9), (10, 10))
 
 
 class Genre(models.Model):
@@ -94,7 +94,7 @@ class TitleGenre(models.Model):
         return f'{self.title} {self.genre}'
 
 
-class Reviews(models.Model):
+class Review(models.Model):
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
@@ -120,10 +120,13 @@ class Reviews(models.Model):
 
 
 class Comment(models.Model):
+    pub_date = models.DateTimeField(
+        'Дата публикации', auto_now=True,
+    )
     review = models.ForeignKey(
-        Reviews,
+        Review,
         blank=True, null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='comments',
     )
     author = models.ForeignKey(

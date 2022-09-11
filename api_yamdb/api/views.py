@@ -1,4 +1,3 @@
-
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -7,15 +6,14 @@ from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from reviews.models import Category, Genre, Reviews, Title
+from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewsSerializer,
                           TitleReadSerializer, TitleWriteSerializer,
                           UserSerializer, SelfSerializer)
-from rest_framework import permissions
-from .permissions import IsAdmin, IsAdminOrReadOnly, IsOwnerOrReadOnly
+from .permissions import IsAdmin, IsAdminOrReadOnly, AdminModerator
 from .filters import TitleFilter
 
 
@@ -55,7 +53,7 @@ class CategoryViewSet(ListCreateDestroyViewSet):
     def get_permissions(self):
         if self.action in ('retrieve', 'list'):
             return (AllowAny(),)
-        return super().get_permissions() 
+        return super().get_permissions()
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -82,7 +80,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
     """Класс Отзывы для обработки  запросов:
     GET,POST,DELETE,PATCH"""
     serializer_class = ReviewsSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (AdminModerator,)
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
@@ -90,24 +88,25 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         return title.reviews.all()
 
     def perform_create(self, serializer):
-        id=self.kwargs.get('title_id')
+        id = self.kwargs.get('title_id')
         serializer.save(title_id=id, author=self.request.user)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     """Класс Коментарии для обработки комментариев"""
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
+    permission_classes = (AdminModerator,)
+    pagination_class = LimitOffsetPagination
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
         review_id = self.kwargs.get('review_id')
-        review = get_object_or_404(Reviews, id=review_id, title=title_id)
+        review = get_object_or_404(Review, id=review_id, title=title_id)
         serializer.save(author=self.request.user, review=review)
 
     def get_queryset(self):
         review_id = self.kwargs.get("review_id")
-        review = get_object_or_404(Reviews, id=review_id)
+        review = get_object_or_404(Review, id=review_id)
 
         return review.comments.all()
 
@@ -119,8 +118,8 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     permission_classes = (IsAdmin,)
 
-
-    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(IsAuthenticated,))
+    @action(methods=['GET', 'PATCH'],
+            detail=False, permission_classes=(IsAuthenticated,))
     def me(self, request):
         if request.method == 'PATCH':
             user = request.user
@@ -130,5 +129,3 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(serializer.data,)
         serializer = SelfSerializer(request.user)
         return Response(serializer.data)
-
-
