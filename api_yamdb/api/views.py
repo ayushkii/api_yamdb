@@ -1,3 +1,4 @@
+from functools import partial
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
@@ -122,17 +123,16 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdmin,)
 
 
-    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(IsSelfUserOrReadOnly,))
+    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(IsSelfUserOrReadOnly, IsAuthenticated))
     def me(self, request):
         if request.method == 'PATCH':
             user = request.user
-            serializer = UserSerializer(data=request.data)
-            if serializer.is_valid():
-                user.save()
-                return Response(user)
-            else:
-                return Response(serializer.errors)
-        
+            print('Request data:', request.data),
+            serializer = UserSerializer(user, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            # if request.user.role == request.data.json()['role']:
+            serializer.save()
+            return Response(serializer.data,)
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
