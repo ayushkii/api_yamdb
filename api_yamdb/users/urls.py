@@ -1,13 +1,21 @@
 from django.urls import include, path
-from rest_framework.routers import SimpleRouter
+from .views import token, signup
+# from rest_framework.routers import SimpleRouter
 
-from .views import SignUpViewSet
+# from .views import SignUpViewSet
 
-router = SimpleRouter()
+# router = SimpleRouter()
 
+app_name = 'auth'
 
-router.register('', SignUpViewSet)
+# router.register('signup', SignUpViewSet)
+
+# urlpatterns = [
+#     path('', include(router.urls)),
+    
+# ]
 
 urlpatterns = [
-    path('auth/', include(router.urls)),
+    path('signup/', signup),
+    path('token/', token),
 ]
