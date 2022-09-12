@@ -95,10 +95,8 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     """Класс Коментарии для обработки комментариев"""
     serializer_class = CommentSerializer
-
     permission_classes = (AdminModerator,)
     pagination_class = LimitOffsetPagination
-
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')

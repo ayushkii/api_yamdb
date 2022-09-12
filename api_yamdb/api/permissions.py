@@ -36,15 +36,8 @@ class IsSelfUserOrReadOnly(permissions.BasePermission):
         return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-<<<<<<< HEAD
-        if request.user == obj:
-            return True
-        return False
-        
-=======
         return request.user == obj
 
->>>>>>> test
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """Собственный класс разрешений"""
@@ -58,10 +51,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS
-<<<<<<< HEAD
-            or obj.author == request.user
-        )
-=======
+
             or obj.author == request.user)
 
 
@@ -74,4 +64,4 @@ class AdminModerator(permissions.BasePermission):
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated)
->>>>>>> test
+
