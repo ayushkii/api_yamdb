@@ -9,4 +9,4 @@ pytest-django==4.4.0
 pytest-pythonpath==0.7.3
 drf_yasg==1.21.3
 django_filter
-dotenv
+python-dotenv
