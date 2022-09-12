@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from users.models import ADMIN, MOD
 
+
 class IsAdmin(permissions.BasePermission):
     """Дает возможность админу создавать новых пользователей."""
 
