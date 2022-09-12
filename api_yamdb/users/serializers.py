@@ -1,7 +1,7 @@
-from rest_framework import serializers
 from django.shortcuts import get_object_or_404
+from rest_framework import serializers
 
-from .models import User, CodeUser
+from .models import CodeUser, User
 
 CODE_DICT = {}
 

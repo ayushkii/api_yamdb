@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import token, signup
 
+from .views import signup, token
 
 app_name = 'auth'
 

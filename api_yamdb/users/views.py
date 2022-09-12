@@ -1,13 +1,14 @@
 from secrets import token_hex
-from django.shortcuts import get_object_or_404
+
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User, CodeUser
-from .serializers import SignUpSerializer, TokenSerializer, CODE_DICT
+from .models import CodeUser, User
+from .serializers import CODE_DICT, SignUpSerializer, TokenSerializer
 
 
 @api_view(['POST'])
@@ -18,8 +19,6 @@ def signup(request):
         code = token_hex(16)
         #username = request.data['username']
         #CODE_DICT[f'{username}'] = f'{code}'
-        # user = get_object_or_404(User, username=request.data['username'])
-        # CodeUser.objects.create(user=user, code=code)
         send_mail(
             'код восстановления',
             f'{code}',
