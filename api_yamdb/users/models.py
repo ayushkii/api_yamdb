@@ -17,11 +17,15 @@ class User(AbstractUser):
 class CodeUser(models.Model):
     user = models.ForeignKey(
         User,
-        'Юзер',
-        on_delete=CASCADE,
+        verbose_name='Юзер',
+        on_delete=models.CASCADE,
         related_name='code'
     )
     code = models.CharField(
         'Код',
         max_length=40
     )
+
+    class Meta:
+        verbose_name = 'Код подтверждения'
+        verbose_name_plural = 'Коды подтверждения'

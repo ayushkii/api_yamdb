@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User
+from .models import User, CodeUser
 from .serializers import SignUpSerializer, TokenSerializer, CODE_DICT
 
 
@@ -16,8 +16,10 @@ def signup(request):
     if serializer.is_valid():
         email = request.data['email']
         code = token_hex(16)
-        username = request.data['username']
-        CODE_DICT[f'{username}'] = f'{code}'
+        #username = request.data['username']
+        #CODE_DICT[f'{username}'] = f'{code}'
+        # user = get_object_or_404(User, username=request.data['username'])
+        # CodeUser.objects.create(user=user, code=code)
         send_mail(
             'код восстановления',
             f'{code}',
@@ -26,6 +28,8 @@ def signup(request):
             fail_silently=True,
         )
         serializer.save()
+        user = get_object_or_404(User, username=request.data['username'])
+        CodeUser.objects.create(user=user, code=code)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

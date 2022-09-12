@@ -19,7 +19,7 @@ class Genre(models.Model):
 
     class Meta:
         verbose_name = 'Жанр'
-        verbose_name = 'Жанры'
+        verbose_name_plural = 'Жанры'
 
     def __str__(self):
         return self.name
@@ -38,7 +38,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name = 'Категория'
-        verbose_name = 'Категории'
+        verbose_name_plural = 'Категории'
 
     def __str__(self):
         return self.name
@@ -74,7 +74,7 @@ class Title(models.Model):
 
     class Meta:
         verbose_name = 'Произведение'
-        verbose_name = 'Произведения'
+        verbose_name_plural = 'Произведения'
 
     def __str__(self):
         return self.name
@@ -89,6 +89,10 @@ class TitleGenre(models.Model):
         Genre,
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        verbose_name = 'Жанр Произведения'
+        verbose_name_plural = 'Жанры произведений'
 
     def __str__(self):
         return f'{self.title} {self.genre}'
@@ -114,6 +118,8 @@ class Review(models.Model):
                 name='unique_author_title_id'
             )
         ]
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
 
     def __str__(self):
         return self.text
@@ -136,3 +142,7 @@ class Comment(models.Model):
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'

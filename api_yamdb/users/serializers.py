@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 
-from .models import User
+from .models import User, CodeUser
 
 CODE_DICT = {}
 
@@ -38,8 +38,9 @@ class TokenSerializer(serializers.Serializer):
 
     def validate(self, data):
         username = data['username']
+        user = get_object_or_404(User, username=username)
         confirmation_code = data['confirmation_code']
-        get_object_or_404(User, username=username)
-        if CODE_DICT[f'{username}'] == f'{confirmation_code}':
+        # get_object_or_404(User, username=username)
+        if CodeUser.objects.get(user=user).code == f'{confirmation_code}':
             return data
         raise serializers.ValidationError('Неверный код подтверждения')
