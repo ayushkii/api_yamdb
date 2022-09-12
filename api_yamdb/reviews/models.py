@@ -1,9 +1,9 @@
-
 from django.db import models
 
 from users.models import User
 
-RATE_SOCRES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 6), (7, 7), (8, 8), (9, 9), (10, 10))
+RATE_SOCRES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
+               (6, 6), (7, 7), (8, 8), (9, 9), (10, 10))
 
 
 class Genre(models.Model):
@@ -62,8 +62,7 @@ class Title(models.Model):
         Genre,
         through='TitleGenre',
         verbose_name='Жанр',
-        null=True,
-        blank=False
+        blank=False,
     )
     category = models.ForeignKey(
         Category,
@@ -95,7 +94,7 @@ class TitleGenre(models.Model):
         return f'{self.title} {self.genre}'
 
 
-class Reviews(models.Model):
+class Review(models.Model):
     text = models.TextField()
     pub_date = models.DateTimeField(
         'Дата публикации', auto_now_add=True
@@ -103,30 +102,31 @@ class Reviews(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='reviews'
     )
-    score = models.IntegerField(choices=RATE_SOCRES, unique=True)
+    score = models.IntegerField(choices=RATE_SOCRES)
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
     )
 
     class Meta:
-        constraints = (
-            models.UniqueConstraint(fields=(
-                'title', 'author'
-            ),
-                name='unique_reviews'
-            ),
-        )
-        ordering = ('-pub_date',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'title_id'],
+                name='unique_author_title_id'
+            )
+        ]
 
     def __str__(self):
         return self.text
 
 
 class Comment(models.Model):
+    pub_date = models.DateTimeField(
+        'Дата публикации', auto_now=True,
+    )
     review = models.ForeignKey(
-        Reviews,
+        Review,
         blank=True, null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name='comments',
     )
     author = models.ForeignKey(

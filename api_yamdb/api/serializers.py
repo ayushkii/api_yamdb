@@ -2,9 +2,11 @@ import datetime as dt
 
 from django.db.models import Avg
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
-from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
-from reviews.models import Category, Comment, Genre, Reviews, Title
+
+from rest_framework.validators import UniqueValidator
+from rest_framework.generics import get_object_or_404
+
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
 
@@ -36,7 +38,9 @@ class TitleReadSerializer(serializers.ModelSerializer):
         read_only_fields = ('rating',)
 
     def get_rating(self, obj):
-        return Reviews.objects.filter(title=obj).aggregate(Avg('score')).get('score_avg')
+        return Review.objects.filter(
+            title=obj
+        ).aggregate(Avg('score')).get('score__avg')
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
@@ -64,18 +68,25 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
 
 class ReviewsSerializer(serializers.ModelSerializer):
-    author = SlugRelatedField(slug_field='username', read_only=True)
+
+    author = serializers.StringRelatedField(
+        read_only=True, default=serializers.CurrentUserDefault())
 
     class Meta:
-        fields = '__all__'
-        model = Reviews
-        validators = (
-            UniqueTogetherValidator(
-                queryset=Reviews.objects.all(),
-                fields=('title', 'author'),
-                message='Невозможно сделать два отзыва к оджному произведнию'
-            ),
-        )
+        model = Review
+        exclude = ('title',)
+
+    def validate(self, data):
+        request = self.context['request']
+        author = request.user
+        title_id = self.context['view'].kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        if request.method == 'POST':
+            if Review.objects.filter(title=title, author=author).exists():
+                raise serializers.ValidationError(
+                    'Невозможно оставить более одного отзыва'
+                )
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -89,7 +100,6 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         read_only_fields = ('author', 'post', 'id')
 
-    
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -116,13 +126,6 @@ class UserSerializer(serializers.ModelSerializer):
             )
         return value
 
-    # def validate(self, data):
-    #     if self.context['request'].user.role != 'admin':
-    #         if self.context['request'].user.role != data['role']:
-    #             raise serializers.ValidationError(
-    #                 'Невозможно подписаться изменить роль')
-    #     return data
-
     def validate_role(self, value):
         if value not in ('admin', 'moderator', 'user'):
             raise serializers.ValidationError(
@@ -130,4 +133,10 @@ class UserSerializer(serializers.ModelSerializer):
             )
         return value
 
-    
+
+class SelfSerializer(UserSerializer):
+    class Meta:
+        fields = '__all__'
+        read_only_fields = ('role',)
+        model = User
+

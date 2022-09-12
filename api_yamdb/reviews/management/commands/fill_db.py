@@ -4,7 +4,7 @@ from django.core.management import BaseCommand
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from reviews.models import (Category, Comment, Genre, TitleGenre, Reviews,
+from reviews.models import (Category, Comment, Genre, TitleGenre, Review,
                             Title, User)
 
 TABLES_DICT = {
@@ -12,7 +12,7 @@ TABLES_DICT = {
     Category: 'category.csv',
     Genre: 'genre.csv',
     Title: 'titles.csv',
-    Reviews: 'review.csv',
+    Review: 'review.csv',
     Comment: 'comments.csv',
     TitleGenre: 'genre_title.csv'
 }
