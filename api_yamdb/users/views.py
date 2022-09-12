@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import CodeUser, User
-from .serializers import CODE_DICT, SignUpSerializer, TokenSerializer
+from .serializers import SignUpSerializer, TokenSerializer
 
 
 @api_view(['POST'])
@@ -17,8 +17,6 @@ def signup(request):
     if serializer.is_valid():
         email = request.data['email']
         code = token_hex(16)
-        #username = request.data['username']
-        #CODE_DICT[f'{username}'] = f'{code}'
         send_mail(
             'код восстановления',
             f'{code}',
