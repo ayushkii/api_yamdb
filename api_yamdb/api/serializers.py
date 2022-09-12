@@ -5,7 +5,7 @@ from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.validators import UniqueValidator
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import User
+from users.models import User, ADMIN, MOD, USER
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -125,7 +125,7 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def validate_role(self, value):
-        if value not in ('admin', 'moderator', 'user'):
+        if value not in (ADMIN, MOD, USER):
             raise serializers.ValidationError(
                 'Недопустимая пользовательская роль!'
             )
