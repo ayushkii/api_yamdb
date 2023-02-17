@@ -1,4 +1,0 @@
-# api_yamdb
-api_yamdb
-api_yamdbapi_yamdbapi_yamdbapi_yamdb
-api_yamdbapi_yamdbapi_yamdbapi_yamdbapi_yamdbapi_yamdb

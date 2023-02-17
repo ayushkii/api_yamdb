@@ -10,3 +10,5 @@ pytest-pythonpath==0.7.3
 drf_yasg==1.21.3
 django_filter
 python-dotenv
+gunicorn==20.0.4
+psycopg2-binary==2.8.6
